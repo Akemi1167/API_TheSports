@@ -251,32 +251,7 @@ const headToHeadController = require('../controllers/headToHeadController');
  *           format: date-time
  */
 
-/**
- * @swagger
- * /api/head-to-head:
- *   get:
- *     summary: Lấy tất cả dữ liệu thống kê đối đầu
- *     tags: [Head-to-Head]
- *     responses:
- *       200:
- *         description: Danh sách thống kê đối đầu
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 total:
- *                   type: integer
- *                   description: Tổng số bản ghi
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/HeadToHead'
- */
-router.get('/', headToHeadController.getAllHeadToHeadData);
+// GET all method removed
 
 /**
  * @swagger
@@ -537,115 +512,8 @@ router.get('/team/:team_id/future', headToHeadController.getFutureMatches);
  */
 router.get('/:h2h_id', headToHeadController.getHeadToHeadById);
 
-/**
- * @swagger
- * /api/head-to-head:
- *   post:
- *     summary: Tạo hoặc cập nhật thống kê đối đầu
- *     tags: [Head-to-Head]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 info:
- *                   type: array
- *                   description: Mảng thông tin trận đấu chính (10 elements)
- *                 history:
- *                   type: object
- *                   properties:
- *                     vs:
- *                       type: array
- *                       description: Mảng lịch sử đối đầu
- *                     home:
- *                       type: array
- *                       description: Mảng thành tích gần đây đội nhà
- *                     away:
- *                       type: array
- *                       description: Mảng thành tích gần đây đội khách
- *                 future:
- *                   type: object
- *                   properties:
- *                     home:
- *                       type: array
- *                       description: Mảng lịch thi đấu đội nhà
- *                     away:
- *                       type: array
- *                       description: Mảng lịch thi đấu đội khách
- *                 goal_distribution:
- *                   type: object
- *                   properties:
- *                     home:
- *                       type: object
- *                       description: Phân bố bàn thắng đội nhà
- *                     away:
- *                       type: object
- *                       description: Phân bố bàn thắng đội khách
- *     responses:
- *       200:
- *         description: Dữ liệu được xử lý thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 summary:
- *                   type: object
- *                   properties:
- *                     created:
- *                       type: integer
- *                     updated:
- *                       type: integer
- *                     errors:
- *                       type: integer
- *                     total_processed:
- *                       type: integer
- *                 errors:
- *                   type: array
- */
-router.post('/', headToHeadController.createOrUpdateHeadToHead);
+// POST method removed
 
-/**
- * @swagger
- * /api/head-to-head/{h2h_id}:
- *   delete:
- *     summary: Xóa thống kê đối đầu
- *     tags: [Head-to-Head]
- *     parameters:
- *       - in: path
- *         name: h2h_id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID thống kê đối đầu
- *     responses:
- *       200:
- *         description: Xóa thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: object
- *                   properties:
- *                     message:
- *                       type: string
- *       404:
- *         description: Không tìm thấy dữ liệu để xóa
- */
-router.delete('/:h2h_id', headToHeadController.deleteHeadToHead);
+// DELETE method removed
 
 module.exports = router;

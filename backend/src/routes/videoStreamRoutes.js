@@ -13,22 +13,47 @@ const videoStreamController = require('../controllers/videoStreamController');
  *           type: number
  *           description: Sport type (1-football, 2-basketball)
  *           example: 1
+ *           default: 1
  *         match_id:
  *           type: string
  *           description: Unique match identifier
  *           example: "n54qllhp2gd1qvy"
+ *           required: true
  *         match_time:
  *           type: number
  *           description: Match timestamp
  *           example: 1644886800
- *         pushurl1:
+ *           default: 0
+ *         match_status:
+ *           type: number
+ *           description: Match status code
+ *           example: 1
+ *           default: 0
+ *         comp:
+ *           type: string
+ *           description: Competition name
+ *           example: "Premier League"
+ *           default: ""
+ *         home:
+ *           type: string
+ *           description: Home team name
+ *           example: "Manchester United"
+ *           default: ""
+ *         away:
+ *           type: string
+ *           description: Away team name
+ *           example: "Liverpool"
+ *           default: ""
+ *         playurl1:
  *           type: string
  *           description: SD stream address (RTMP)
  *           example: "rtmp://xxxx/xx/sd-1-3674457"
- *         pushurl2:
+ *           default: ""
+ *         playurl2:
  *           type: string
  *           description: English HD stream address (RTMP), can be empty
- *           example: ""
+ *           example: "rtmp://xxxx/xx/hd-1-3674457"
+ *           default: ""
  *         created_at:
  *           type: string
  *           format: date-time
