@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const PlayerSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true, description: 'Player id' },
-  team_id: { type: String, required: true, description: 'Team id, 0 if retired/free/unknown' },
-  name: { type: String, required: true, description: 'Player name' },
+  team_id: { type: String, required: false, default: '0', description: 'Team id, 0 if retired/free/unknown' },
+  name: { type: String, required: false, default: '', description: 'Player name' },
   short_name: { type: String, required: false, description: 'Player abbreviation' },
   logo: { type: String, required: false, description: 'Player logo' },
   national_logo: { type: String, required: false, description: 'Player logo (National team lineup)' },
@@ -24,7 +24,7 @@ const PlayerSchema = new mongoose.Schema({
   uid: { type: String, required: false, description: 'Player id (merged)' },
   deathday: { type: Number, required: false, description: 'Time of death' },
   retire_time: { type: Number, required: false, description: 'Retirement time' },
-  updated_at: { type: Number, required: true, description: 'Update time' }
+  updated_at: { type: Number, required: false, default: Date.now, description: 'Update time' }
 });
 
 module.exports = mongoose.model('Player', PlayerSchema);

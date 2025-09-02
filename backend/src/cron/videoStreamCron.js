@@ -14,8 +14,13 @@ const syncVideoStreams = async () => {
   try {
     console.log('🎥 Starting video streams synchronization...');
     
+    // Xóa tất cả dữ liệu cũ trước khi sync mới
+    console.log('🗑️ Clearing old video stream data...');
+    const deleteResult = await VideoStream.deleteMany({});
+    console.log(`🗑️ Deleted ${deleteResult.deletedCount} old video stream records`);
+    
     // Gọi API để lấy dữ liệu video streams
-    const response = await axios.get(`${API_CONFIG.baseURL}/video/push/stream/list`, {
+    const response = await axios.get(`${API_CONFIG.baseURL}/video/play/stream/list`, {
       params: {
         user: API_CONFIG.user,
         secret: API_CONFIG.secret
@@ -27,52 +32,29 @@ const syncVideoStreams = async () => {
     console.log(`📡 Fetched ${videoStreams.length} video streams from API`);
 
     let insertCount = 0;
-    let updateCount = 0;
 
-    // Xử lý từng video stream
+    // Xử lý từng video stream (chỉ insert vì đã xóa hết)
     for (const streamData of videoStreams) {
       try {
-        // Tìm video stream có sẵn theo match_id
-        const existingStream = await VideoStream.findOne({ match_id: streamData.match_id });
-
-        if (existingStream) {
-          // Cập nhật nếu có thay đổi
-          const hasChanges = 
-            existingStream.sport_id !== streamData.sport_id ||
-            existingStream.match_time !== streamData.match_time ||
-            existingStream.pushurl1 !== streamData.pushurl1 ||
-            existingStream.pushurl2 !== streamData.pushurl2;
-
-          if (hasChanges) {
-            await VideoStream.updateOne(
-              { match_id: streamData.match_id },
-              {
-                sport_id: streamData.sport_id,
-                match_time: streamData.match_time,
-                pushurl1: streamData.pushurl1,
-                pushurl2: streamData.pushurl2 || '',
-                updated_at: new Date()
-              }
-            );
-            updateCount++;
-          }
-        } else {
-          // Tạo mới video stream
-          await VideoStream.create({
-            sport_id: streamData.sport_id,
-            match_id: streamData.match_id,
-            match_time: streamData.match_time,
-            pushurl1: streamData.pushurl1,
-            pushurl2: streamData.pushurl2 || ''
-          });
-          insertCount++;
-        }
+        // Tạo mới video stream
+        await VideoStream.create({
+          sport_id: streamData.sport_id || 1,
+          match_id: streamData.match_id,
+          match_time: streamData.match_time || 0,
+          match_status: streamData.match_status || 0,
+          comp: streamData.comp || '',
+          home: streamData.home || '',
+          away: streamData.away || '',
+          playurl1: streamData.playurl1 || '',
+          playurl2: streamData.playurl2 || ''
+        });
+        insertCount++;
       } catch (error) {
         console.error(`❌ Error processing video stream ${streamData.match_id}:`, error.message);
       }
     }
 
-    console.log(`✅ Video streams sync completed: ${insertCount} new, ${updateCount} updated`);
+    console.log(`✅ Video streams sync completed: ${insertCount} new records created`);
     
   } catch (error) {
     console.error('❌ Video streams synchronization failed:', error.message);
@@ -83,8 +65,8 @@ const syncVideoStreams = async () => {
   }
 };
 
-// Cron job chạy mỗi 30 phút để đồng bộ video streams
-const videoStreamCronJob = cron.schedule('*/30 * * * *', syncVideoStreams, {
+// Cron job chạy mỗi phút để đồng bộ video streams
+const videoStreamCronJob = cron.schedule('* * * * *', syncVideoStreams, {
   scheduled: false,
   timezone: 'Asia/Ho_Chi_Minh'
 });
@@ -102,12 +84,12 @@ const initializeVideoStreamCron = async () => {
     
     // Bắt đầu cron job sau khi kiểm tra
     videoStreamCronJob.start();
-    console.log('🎥 Video stream cron job scheduled (every 30 minutes)');
+    console.log('🎥 Video stream cron job scheduled (every minute)');
   } catch (error) {
     console.error('❌ Error initializing video stream cron:', error.message);
     // Vẫn start cron job ngay cả khi có lỗi
     videoStreamCronJob.start();
-    console.log('🎥 Video stream cron job scheduled (every 30 minutes)');
+    console.log('🎥 Video stream cron job scheduled (every minute)');
   }
 };
 

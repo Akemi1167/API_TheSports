@@ -23,6 +23,8 @@ const venueRoutes = require('./routes/venueRoutes');
 const seasonRoutes = require('./routes/seasonRoutes');
 const stageRoutes = require('./routes/stageRoutes');
 const videoStreamRoutes = require('./routes/videoStreamRoutes');
+const realTimeDataRoutes = require('./routes/realTimeDataRoutes');
+const headToHeadRoutes = require('./routes/headToHeadRoutes');
 
 app.use('/api/categories', categoryRoutes);
 app.use('/api/countries', countryRoutes);
@@ -35,6 +37,8 @@ app.use('/api/venues', venueRoutes);
 app.use('/api/seasons', seasonRoutes);
 app.use('/api/stages', stageRoutes);
 app.use('/api/video-streams', videoStreamRoutes);
+app.use('/api/realtime', realTimeDataRoutes);
+app.use('/api/head-to-head', headToHeadRoutes);
 
 // TODO: Import and use routes here
 // const userRoutes = require('./routes/userRoutes');
@@ -67,6 +71,8 @@ const { initializeVenueCron } = require('./cron/venueCron');
 const { initializeSeasonCron } = require('./cron/seasonCron');
 const { initializeStageCron } = require('./cron/stageCron');
 const { initializeVideoStreamCron } = require('./cron/videoStreamCron');
+const { initializeRealTimeDataCron } = require('./cron/realTimeDataCron');
+const { initializeHeadToHeadCron } = require('./cron/headToHeadCron');
 
 connectDB().then(async () => {
   // Initialize all cron jobs (check data and start)
@@ -83,6 +89,8 @@ connectDB().then(async () => {
   await initializeSeasonCron();
   await initializeStageCron();
   await initializeVideoStreamCron();
+  await initializeRealTimeDataCron();
+  await initializeHeadToHeadCron();
   
   console.log('✅ All cron jobs initialized successfully');
   

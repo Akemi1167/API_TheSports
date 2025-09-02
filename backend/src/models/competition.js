@@ -15,12 +15,12 @@ const HostSchema = new mongoose.Schema({
 
 const CompetitionSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true, description: 'Competition id' },
-  category_id: { type: String, required: true, description: 'Category id' },
+  category_id: { type: String, required: false, description: 'Category id' },
   country_id: { type: String, required: false, description: 'Country id' },
-  name: { type: String, required: true, description: 'Competition name' },
-  short_name: { type: String, required: true, description: 'Competition abbreviation' },
-  logo: { type: String, required: true, description: 'Competition logo' },
-  type: { type: Number, required: true, description: 'Competition type: 0-unknown, 1-league, 2-cup, 3-friendly' },
+  name: { type: String, required: false, default: '', description: 'Competition name' },
+  short_name: { type: String, required: false, default: '', description: 'Competition abbreviation' },
+  logo: { type: String, required: false, default: '', description: 'Competition logo' },
+  type: { type: Number, required: false, default: 0, description: 'Competition type: 0-unknown, 1-league, 2-cup, 3-friendly' },
   cur_season_id: { type: String, required: false, description: 'Current season id' },
   cur_stage_id: { type: String, required: false, description: 'Current stage id' },
   cur_round: { type: Number, required: false, description: 'Current round' },
@@ -34,7 +34,7 @@ const CompetitionSchema = new mongoose.Schema({
   primary_color: { type: String, required: false, description: 'Main color' },
   secondary_color: { type: String, required: false, description: 'Secondary color' },
   uid: { type: String, required: false, description: 'Competition id (merged)' },
-  updated_at: { type: Number, required: true, description: 'Update time' }
+  updated_at: { type: Number, required: false, default: Date.now, description: 'Update time' }
 });
 
 module.exports = mongoose.model('Competition', CompetitionSchema);

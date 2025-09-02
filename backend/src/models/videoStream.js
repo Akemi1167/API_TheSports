@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const videoStreamSchema = new mongoose.Schema({
   sport_id: {
     type: Number,
-    required: true,
+    required: false,
+    default: 1,
     description: 'Sport type: 1-football, 2-basketball'
   },
   match_id: {
@@ -14,16 +15,43 @@ const videoStreamSchema = new mongoose.Schema({
   },
   match_time: {
     type: Number,
-    required: true,
+    required: false,
+    default: 0,
     description: 'Match timestamp'
   },
-  pushurl1: {
+  match_status: {
+    type: Number,
+    required: false,
+    default: 0,
+    description: 'Match status code'
+  },
+  comp: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
+    description: 'Competition name'
+  },
+  home: {
+    type: String,
+    required: false,
+    default: '',
+    description: 'Home team name'
+  },
+  away: {
+    type: String,
+    required: false,
+    default: '',
+    description: 'Away team name'
+  },
+  playurl1: {
+    type: String,
+    required: false,
+    default: '',
     description: 'SD stream address (RTMP)'
   },
-  pushurl2: {
+  playurl2: {
     type: String,
+    required: false,
     default: '',
     description: 'English HD stream address (RTMP), can be empty'
   },
@@ -47,5 +75,8 @@ videoStreamSchema.pre('save', function(next) {
 videoStreamSchema.index({ match_id: 1 });
 videoStreamSchema.index({ sport_id: 1 });
 videoStreamSchema.index({ match_time: 1 });
+videoStreamSchema.index({ match_status: 1 });
+videoStreamSchema.index({ comp: 1 });
+videoStreamSchema.index({ home: 1, away: 1 });
 
 module.exports = mongoose.model('VideoStream', videoStreamSchema);

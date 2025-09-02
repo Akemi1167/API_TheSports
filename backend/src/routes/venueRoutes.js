@@ -1,6 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { getAllVenues, getVenueById } = require('../controllers/venueController');
+const { getAllVenues, getVenueById, syncVenuesData } = require('../controllers/venueController');
+
+/**
+ * @swagger
+ * /api/venues/sync:
+ *   post:
+ *     summary: Synchronize venues data from external API
+ *     tags: [Venues]
+ *     responses:
+ *       200:
+ *         description: Venues synchronization completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Venues synchronization completed successfully
+ *       500:
+ *         description: Synchronization failed
+ */
+router.post('/sync', syncVenuesData);
 
 /**
  * @swagger
