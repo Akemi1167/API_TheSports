@@ -26,6 +26,8 @@ const videoStreamRoutes = require('./routes/videoStreamRoutes');
 const realTimeDataRoutes = require('./routes/realTimeDataRoutes');
 const headToHeadRoutes = require('./routes/headToHeadRoutes');
 const standingRoutes = require('./routes/standingRoutes');
+const liveScoreRoutes = require('./routes/liveScoreRoutes');
+const lineupRoutes = require('./routes/lineupRoutes');
 
 app.use('/api/categories', categoryRoutes);
 app.use('/api/countries', countryRoutes);
@@ -42,6 +44,8 @@ app.use('/api/realtime', realTimeDataRoutes);
 app.use('/api/h2h', headToHeadRoutes);
 app.use('/api/standings', standingRoutes);
 app.use('/api/head-to-head', headToHeadRoutes);
+app.use('/api/live-scores', liveScoreRoutes);
+app.use('/api/lineups', lineupRoutes);
 
 // TODO: Import and use routes here
 // const userRoutes = require('./routes/userRoutes');
@@ -77,6 +81,7 @@ const { initializeVideoStreamCron } = require('./cron/videoStreamCron');
 const { initializeRealTimeDataCron } = require('./cron/realTimeDataCron');
 const { initializeHeadToHeadCron } = require('./cron/headToHeadCron');
 const { initializeStandingCron } = require('./cron/standingCron');
+const { lineupCronJob } = require('./cron/lineupCron');
 
 connectDB().then(async () => {
   // Initialize all cron jobs (check data and start)
@@ -96,6 +101,10 @@ connectDB().then(async () => {
   await initializeRealTimeDataCron();
   await initializeHeadToHeadCron();
   await initializeStandingCron();
+  
+  // Start lineup cron job
+  console.log('🏃‍♂️ Starting lineup sync cron (every 10 minutes)...');
+  lineupCronJob.start();
   
   console.log('✅ All cron jobs initialized successfully');
   

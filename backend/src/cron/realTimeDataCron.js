@@ -101,8 +101,8 @@ const initializeRealTimeDataCron = async () => {
     // Perform initial check and sync if needed
     await checkRealTimeDataNeed();
     
-    // Schedule real-time data sync every 2 minutes for live updates
-    const realTimeTask = cron.schedule('*/2 * * * *', async () => {
+    // Schedule real-time data sync every 2 seconds for live updates
+    const realTimeTask = cron.schedule('*/2 * * * * *', async () => {
       await syncRealTimeData();
     }, {
       scheduled: false
@@ -133,7 +133,7 @@ const initializeRealTimeDataCron = async () => {
     cleanupTask.start();
     
     console.log('✅ Real-time data cron jobs started:');
-    console.log('   - Sync every 2 minutes for live updates');
+    console.log('   - Sync every 2 seconds for live updates');
     console.log('   - Cleanup old data daily at 3 AM');
     
     // Store tasks for potential stopping

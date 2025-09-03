@@ -1,4 +1,5 @@
 const HeadToHead = require('../models/headToHead');
+const matchScoreService = require('./matchScoreService');
 
 class HeadToHeadService {
   async getAllHeadToHeadData() {
@@ -34,9 +35,12 @@ class HeadToHeadService {
         };
       }
 
+      // Enhance với live scores
+      const enhancedData = await matchScoreService.enhanceHeadToHeadWithScores(h2hData.toObject());
+
       return {
         success: true,
-        data: h2hData
+        data: enhancedData
       };
     } catch (error) {
       return {
@@ -58,9 +62,12 @@ class HeadToHeadService {
         };
       }
 
+      // Enhance với live scores
+      const enhancedData = await matchScoreService.enhanceHeadToHeadWithScores(h2hData.toObject());
+
       return {
         success: true,
-        data: h2hData
+        data: enhancedData
       };
     } catch (error) {
       return {
@@ -92,9 +99,16 @@ class HeadToHeadService {
 
       const h2hData = await HeadToHead.find(query).sort({ 'info.match_time': -1 });
       
+      // Enhance từng record với live scores
+      const enhancedData = await Promise.all(
+        h2hData.map(async (data) => {
+          return await matchScoreService.enhanceHeadToHeadWithScores(data.toObject());
+        })
+      );
+      
       return {
         success: true,
-        data: h2hData
+        data: enhancedData
       };
     } catch (error) {
       return {
@@ -322,6 +336,10 @@ class HeadToHeadService {
         }
       });
 
+      // Enhance matches với live scores
+      const enhancedRecentMatches = await matchScoreService.enhanceMultipleMatches(vsHistory.slice(0, 10));
+      const enhancedAllMatches = await matchScoreService.enhanceMultipleMatches(vsHistory);
+
       return {
         success: true,
         data: {
@@ -331,8 +349,8 @@ class HeadToHeadService {
           home_wins: homeWins,
           away_wins: awayWins,
           draws: draws,
-          recent_matches: vsHistory.slice(0, 10), // 10 trận gần nhất
-          all_matches: vsHistory
+          recent_matches: enhancedRecentMatches, // 10 trận gần nhất với live scores
+          all_matches: enhancedAllMatches // Tất cả trận với live scores
         }
       };
     } catch (error) {
@@ -366,12 +384,15 @@ class HeadToHeadService {
       // Sắp xếp theo thời gian trận đấu
       futureMatches.sort((a, b) => a.match_time - b.match_time);
 
+      // Enhance future matches với live scores (mostly 0-0 cho chưa bắt đầu)
+      const enhancedFutureMatches = await matchScoreService.enhanceMultipleMatches(futureMatches);
+
       return {
         success: true,
         data: {
           team_id: teamId,
           total_future_matches: futureMatches.length,
-          matches: futureMatches
+          matches: enhancedFutureMatches
         }
       };
     } catch (error) {
