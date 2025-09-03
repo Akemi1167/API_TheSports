@@ -182,23 +182,23 @@ const LineupSchema = new mongoose.Schema({
   },
   home_formation: { 
     type: String, 
-    required: true, 
+    default: '', 
     description: 'Home team formation (e.g., "4-4-2")' 
   },
   away_formation: { 
     type: String, 
-    required: true, 
+    default: '', 
     description: 'Away team formation (e.g., "4-3-3")' 
   },
   coach_id: {
     home: { 
       type: String, 
-      required: true, 
+      required: false, 
       description: 'Home team coach ID' 
     },
     away: { 
       type: String, 
-      required: true, 
+      required: false, 
       description: 'Away team coach ID' 
     }
   },

@@ -9,8 +9,8 @@ const API_CONFIG = {
   
   // Default request parameters
   DEFAULT_PARAMS: {
-    // Add any default parameters here if needed
-    // For example: api_key, format, etc.
+    user: 'abcvty',
+    secret: '5b2bae3b821a03197c8caa3083098d78'
   },
   
   // Request timeout in milliseconds
