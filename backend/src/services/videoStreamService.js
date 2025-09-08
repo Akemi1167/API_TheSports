@@ -1,12 +1,37 @@
 const VideoStream = require('../models/videoStream');
+const { 
+  timestampToDateTime, 
+  timestampToDate, 
+  timestampToTime, 
+  formatMatchTime,
+  getCurrentTimestamp 
+} = require('../utils/timestampUtils');
 
 class VideoStreamService {
   async getAllVideoStreams() {
     try {
       const videoStreams = await VideoStream.find().sort({ match_time: -1 });
+      
+      // Add formatted datetime to each stream
+      const streamsWithDateTime = videoStreams.map(stream => {
+        const streamObj = stream.toObject();
+        const matchTimeInfo = formatMatchTime(stream.match_time);
+        
+        return {
+          ...streamObj,
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow
+        };
+      });
+      
       return {
         success: true,
-        data: videoStreams
+        data: streamsWithDateTime
       };
     } catch (error) {
       return {
@@ -26,9 +51,25 @@ class VideoStreamService {
           statusCode: 404
         };
       }
+      
+      // Add formatted datetime
+      const streamObj = videoStream.toObject();
+      const matchTimeInfo = formatMatchTime(videoStream.match_time);
+      
+      const streamWithDateTime = {
+        ...streamObj,
+        match_datetime: matchTimeInfo.datetime,
+        match_date: matchTimeInfo.date,
+        match_time_only: matchTimeInfo.time,
+        is_live: matchTimeInfo.isLive,
+        is_past: matchTimeInfo.isPast,
+        is_future: matchTimeInfo.isFuture,
+        minutes_from_now: matchTimeInfo.minutesFromNow
+      };
+      
       return {
         success: true,
-        data: videoStream
+        data: streamWithDateTime
       };
     } catch (error) {
       return {
@@ -41,9 +82,27 @@ class VideoStreamService {
   async getVideoStreamsBySportId(sport_id) {
     try {
       const videoStreams = await VideoStream.find({ sport_id }).sort({ match_time: -1 });
+      
+      // Add formatted datetime to each stream
+      const streamsWithDateTime = videoStreams.map(stream => {
+        const streamObj = stream.toObject();
+        const matchTimeInfo = formatMatchTime(stream.match_time);
+        
+        return {
+          ...streamObj,
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow
+        };
+      });
+      
       return {
         success: true,
-        data: videoStreams
+        data: streamsWithDateTime
       };
     } catch (error) {
       return {
@@ -64,9 +123,26 @@ class VideoStreamService {
         match_time: { $gte: todayTimestamp }
       }).sort({ match_time: 1 });
       
+      // Add formatted datetime to each active stream
+      const activeWithDateTime = activeStreams.map(stream => {
+        const streamObj = stream.toObject();
+        const matchTimeInfo = formatMatchTime(stream.match_time);
+        
+        return {
+          ...streamObj,
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow
+        };
+      });
+      
       return {
         success: true,
-        data: activeStreams
+        data: activeWithDateTime
       };
     } catch (error) {
       return {
@@ -88,9 +164,27 @@ class VideoStreamService {
         }
       }).sort({ match_time: 1 });
       
+      // Add formatted datetime to each upcoming match
+      const upcomingWithDateTime = upcomingMatches.map(match => {
+        const matchObj = match.toObject();
+        const matchTimeInfo = formatMatchTime(match.match_time);
+        
+        return {
+          ...matchObj,
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow,
+          hours_from_now: Math.round(matchTimeInfo.minutesFromNow / 60 * 10) / 10 // Round to 1 decimal
+        };
+      });
+      
       return {
         success: true,
-        data: upcomingMatches
+        data: upcomingWithDateTime
       };
     } catch (error) {
       return {
@@ -114,11 +208,23 @@ class VideoStreamService {
         }
       }).sort({ match_time: 1 });
       
-      // Add match time information to live matches
+      // Add match time information to live matches with datetime conversion
       const liveMatchesWithTime = liveMatches.map(match => {
+        const matchObj = match.toObject();
         const matchTimeInfo = this.calculateMatchMinutes(now, match.match_time);
+        const datetimeInfo = formatMatchTime(match.match_time);
+        
         return {
-          ...match.toObject(),
+          ...matchObj,
+          // Datetime conversion fields
+          match_datetime: datetimeInfo.datetime,
+          match_date: datetimeInfo.date,
+          match_time_only: datetimeInfo.time,
+          is_live: datetimeInfo.isLive,
+          is_past: datetimeInfo.isPast,
+          is_future: datetimeInfo.isFuture,
+          minutes_from_now: datetimeInfo.minutesFromNow,
+          // Match timing fields
           matchTimeInfo
         };
       }).filter(match => match.matchTimeInfo.isLive || match.matchTimeInfo.half === 'half-time');
@@ -184,9 +290,26 @@ class VideoStreamService {
         }
       }).sort({ match_time: 1 });
       
+      // Add formatted datetime to each match
+      const matchesWithDateTime = matches.map(match => {
+        const matchObj = match.toObject();
+        const matchTimeInfo = formatMatchTime(match.match_time);
+        
+        return {
+          ...matchObj,
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow
+        };
+      });
+      
       return {
         success: true,
-        data: matches
+        data: matchesWithDateTime
       };
     } catch (error) {
       return {
@@ -287,25 +410,28 @@ class VideoStreamService {
         }
       }).sort({ match_time: 1 });
       
-      // Add status to each match
+      // Add status and datetime to each match
       const matchesWithStatus = matches.map(match => {
+        const matchObj = match.toObject();
         const matchTime = match.match_time;
+        const matchTimeInfo = formatMatchTime(matchTime);
+        
         let status = 'upcoming';
         let timeUntilMatch = null;
         let timeFromStart = null;
-        let matchTimeInfo = null;
+        let matchTimingInfo = null;
         
         if (matchTime <= now) {
           const timeSinceStart = now - matchTime;
           timeFromStart = timeSinceStart;
           
           // Calculate match minutes using the new formula
-          matchTimeInfo = this.calculateMatchMinutes(now, matchTime);
+          matchTimingInfo = this.calculateMatchMinutes(now, matchTime);
           
           // Determine status based on match time info
-          if (matchTimeInfo.isLive || matchTimeInfo.half === 'half-time') {
+          if (matchTimingInfo.isLive || matchTimingInfo.half === 'half-time') {
             status = 'live';
-          } else if (matchTimeInfo.half === 'finished') {
+          } else if (matchTimingInfo.half === 'finished') {
             status = 'finished';
           } else if (timeSinceStart <= 7200) { // Fallback: 2 hours = 7200 seconds
             status = 'live';
@@ -315,16 +441,25 @@ class VideoStreamService {
         } else {
           timeUntilMatch = matchTime - now;
           status = 'upcoming';
-          matchTimeInfo = this.calculateMatchMinutes(now, matchTime);
+          matchTimingInfo = this.calculateMatchMinutes(now, matchTime);
         }
         
         return {
-          ...match.toObject(),
+          ...matchObj,
+          // Status fields
           status,
           timeUntilMatch,
           timeFromStart,
           matchTimeFormatted: new Date(matchTime * 1000).toISOString(),
-          matchTimeInfo
+          matchTimeInfo: matchTimingInfo,
+          // Datetime conversion fields
+          match_datetime: matchTimeInfo.datetime,
+          match_date: matchTimeInfo.date,
+          match_time_only: matchTimeInfo.time,
+          is_live: matchTimeInfo.isLive,
+          is_past: matchTimeInfo.isPast,
+          is_future: matchTimeInfo.isFuture,
+          minutes_from_now: matchTimeInfo.minutesFromNow
         };
       });
       

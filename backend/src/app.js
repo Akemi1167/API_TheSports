@@ -28,6 +28,7 @@ const headToHeadRoutes = require('./routes/headToHeadRoutes');
 const standingRoutes = require('./routes/standingRoutes');
 const liveScoreRoutes = require('./routes/liveScoreRoutes');
 const lineupRoutes = require('./routes/lineupRoutes');
+const timestampRoutes = require('./routes/timestampRoutes');
 
 app.use('/api/categories', categoryRoutes);
 app.use('/api/countries', countryRoutes);
@@ -46,6 +47,7 @@ app.use('/api/standings', standingRoutes);
 app.use('/api/head-to-head', headToHeadRoutes);
 app.use('/api/live-scores', liveScoreRoutes);
 app.use('/api/lineups', lineupRoutes);
+app.use('/api/timestamps', timestampRoutes);
 
 // TODO: Import and use routes here
 // const userRoutes = require('./routes/userRoutes');
