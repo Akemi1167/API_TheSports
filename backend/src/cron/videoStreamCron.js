@@ -1,13 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const VideoStream = require('../models/videoStream');
-
-// Cấu hình API
-const API_CONFIG = {
-  baseURL: 'https://api.thesports.com/v1',
-  user: 'abcvty',
-  secret: '5b2bae3b821a03197c8caa3083098d78'
-};
+const { API_CONFIG, buildApiUrl, getRequestConfig } = require('../config/api');
 
 // Hàm đồng bộ dữ liệu video streams
 const syncVideoStreams = async () => {
@@ -19,14 +13,14 @@ const syncVideoStreams = async () => {
     const deleteResult = await VideoStream.deleteMany({});
     console.log(`🗑️ Deleted ${deleteResult.deletedCount} old video stream records`);
     
-    // Gọi API để lấy dữ liệu video streams
-    const response = await axios.get(`${API_CONFIG.baseURL}/video/play/stream/list`, {
-      params: {
-        user: API_CONFIG.user,
-        secret: API_CONFIG.secret
-      },
+    // Build API URL using new configuration
+    const apiUrl = buildApiUrl(API_CONFIG.ENDPOINTS.VIDEO_STREAMS);
+    console.log(`📡 Calling API: ${apiUrl}`);
+    
+    // Gọi API để lấy dữ liệu video streams với endpoint mới
+    const response = await axios.get(apiUrl, getRequestConfig({
       timeout: 30000
-    });
+    }));
 
     const videoStreams = response.data.results || [];
     console.log(`📡 Fetched ${videoStreams.length} video streams from API`);
@@ -46,7 +40,9 @@ const syncVideoStreams = async () => {
           home: streamData.home || '',
           away: streamData.away || '',
           playurl1: streamData.playurl1 || '',
-          playurl2: streamData.playurl2 || ''
+          playurl2: streamData.playurl2 || '',
+          pushurl1: streamData.pushurl1 || '',
+          pushurl2: streamData.pushurl2 || ''
         });
         insertCount++;
       } catch (error) {

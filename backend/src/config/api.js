@@ -34,7 +34,7 @@ const API_CONFIG = {
     VENUES: '/venue',
     SEASONS: '/season',
     STAGES: '/stage',
-    VIDEO_STREAMS: '/video_stream',
+    VIDEO_STREAMS: '/video/push/stream/list', // Updated to push endpoint
     REAL_TIME_DATA: '/real_time',
     HEAD_TO_HEAD: '/h2h',
     STANDINGS: '/standing',
@@ -70,7 +70,16 @@ const API_CONFIG = {
  * @returns {string} Full API URL
  */
 function buildApiUrl(endpoint, params = {}) {
-  const url = new URL(endpoint, API_CONFIG.BASE_URL);
+  // Special handling for video streams endpoint (uses different base)
+  let baseUrl = API_CONFIG.BASE_URL;
+  if (endpoint === API_CONFIG.ENDPOINTS.VIDEO_STREAMS) {
+    // For video streams, use the v1 base and construct URL manually
+    baseUrl = 'https://api.thesports.com/v1' + endpoint;
+  } else {
+    baseUrl = baseUrl + endpoint;
+  }
+  
+  const url = new URL(baseUrl);
   
   // Add default parameters
   Object.entries(API_CONFIG.DEFAULT_PARAMS).forEach(([key, value]) => {

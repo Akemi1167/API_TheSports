@@ -55,6 +55,18 @@ const videoStreamSchema = new mongoose.Schema({
     default: '',
     description: 'English HD stream address (RTMP), can be empty'
   },
+  pushurl1: {
+    type: String,
+    required: false,
+    default: '',
+    description: 'SD push stream address (RTMP)'
+  },
+  pushurl2: {
+    type: String,
+    required: false,
+    default: '',
+    description: 'English HD push stream address (RTMP), can be empty'
+  },
   created_at: {
     type: Date,
     default: Date.now
