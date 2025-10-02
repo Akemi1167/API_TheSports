@@ -34,6 +34,9 @@ const API_CONFIG = {
     VENUES: '/venue',
     SEASONS: '/season',
     STAGES: '/stage',
+    MATCHES: '/match',
+    MATCHES_RECENT: '/match/recent/list',
+    MATCHES_SEASON_RECENT: '/match/season/recent',
     VIDEO_STREAMS: '/video/push/stream/list', // Updated to push endpoint
     REAL_TIME_DATA: '/real_time',
     HEAD_TO_HEAD: '/h2h',
